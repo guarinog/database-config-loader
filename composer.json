@@ -16,7 +16,8 @@
         "source": "https://bitbucket.org/hailwoodnz/database-config-loader/src"
     },
     "require": {
-        "php": ">=5.3.0"
+        "php": ">=5.3.0",
+        "illuminate/support": "4.0.x"
     },
     "require-dev": {
         "mockery/mockery": "0.7.*"

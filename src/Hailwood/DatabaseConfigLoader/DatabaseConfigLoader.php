@@ -137,6 +137,7 @@ class DatabaseConfigLoader implements LoaderInterface{
     }
 
     public function set($value, $package, $group, $item, $environment){
+        unset($this->exists[$group.$package]);
         $type = null;
 
         $givenType = strtolower(gettype($value));

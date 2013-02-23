@@ -26,6 +26,19 @@ class DatabaseConfigLoaderModel extends Eloquent\Model{
     }
 
     public static function set($value, $package, $group, $key, $environment, $type){
+
+        //Lets check if we are doing special array handling
+        $arrayHandling = false;
+        $keyExploded   = explode('.', $key);
+        if(count($keyExploded) > 1){
+            $arrayHandling = true;
+            $key           = array_shift($keyExploded);
+            if($type == 'array'){
+                $value = unserialize($value);
+            }
+        }
+
+
         // First let's try to fetch the model, if it exists then we need to do an
         // Update not an insert
         $model = DatabaseConfigLoaderModel::where('key', $key)->where('group', $group);
@@ -35,6 +48,15 @@ class DatabaseConfigLoaderModel extends Eloquent\Model{
 
 
         if(is_null($model)){
+
+            //Check if we need to do special array handling
+            if($arrayHandling){ // we are setting a subset of an array
+                $array = array();
+                self::buildArrayPath($keyExploded, $value, $array);
+                $value = serialize($array);
+                $type  = 'array';
+            }
+
             DatabaseConfigLoaderModel::create(
                 array(
                      'environment' => $environment,
@@ -46,9 +68,34 @@ class DatabaseConfigLoaderModel extends Eloquent\Model{
                 ));
 
         } else{
+
+            //Check if we need to do special array handling
+            if($arrayHandling){ // we are setting a subset of an array
+                $array = array();
+                self::buildArrayPath($keyExploded, $value, $array);
+
+                //do we need to merge?
+                if($model->type == 'array'){
+                    $array = array_replace_recursive(unserialize($model->value), $array);
+                }
+                $value = serialize($array);
+
+                $type = 'array';
+            }
+
             $model->value = $value;
             $model->type  = $type;
             $model->save();
+        }
+    }
+
+    protected static function buildArrayPath($map, $value, &$array){
+        $key = array_shift($map);
+        if(count($map) !== 0){
+            $array[$key] = array();
+            self::buildArrayPath($map, $value, $array[$key]);
+        } else{
+            $array[$key] = $value;
         }
     }
 }

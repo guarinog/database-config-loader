@@ -15,11 +15,11 @@ class DatabaseConfigLoaderRepository extends Repository{
      *
      * @param  string  $key
      * @param  mixed   $default
+     *
      * @return mixed
      */
-    public function get($key, $default = null)
-    {
-        list($namespace, $group, $item) = $this->parseKey($key);
+    public function get($key, $default = null){
+        list( $namespace, $group, $item ) = $this->parseKey($key);
 
         // Configuration items are actually keyed by "collection", which is simply a
         // combination of each namespace and groups, which allows a unique way to
@@ -40,19 +40,55 @@ class DatabaseConfigLoaderRepository extends Repository{
      *
      * @return void
      */
-    public function set($key, $value, $environment = null)
-    {
-        unset($this->parsed[$key]);
-        d('WORKING ON '.$key);
-        list($namespace, $group, $item) = $this->parseKey($key);
+    public function set($key, $value, $environment = null){
+
+        // We'll unset the key here, we need to do this because previous fetch
+        // attempts before they key is actually created creates a slightly different
+        // parsing value.
+        unset( $this->parsed[$key] );
+
+        // We'll manually set the parsed key here as setting a value requires a
+        // slightly modified parsing. By default parseKey assumes that if a group
+        // does not exist then we are meaning a key in the config group. But when
+        // setting we need to be able to manually create a group on the fly so
+        //
+        // ::set('key', 'value')
+        // If only a key is passed we assume we are dealing with a key from the config
+        // group with no namespace
+        //
+        // ::set('namespace::key', 'value')
+        // If only a namespace and a key are passed we assume we are dealing with a key
+        // from the config group in the mentioned namespace
+        //
+        // Any time a . is present in the key we are going to assume the first section
+        // (excluding the namespace) is the group.
+
+        $explodedOnNamespace = explode('::', $key);
+
+        if(count($explodedOnNamespace) > 1){
+            $namespace = $explodedOnNamespace[0];
+            $group     = $explodedOnNamespace[1];
+        } else{
+            $namespace = null;
+            $group     = $key;
+        }
+
+        $explodedOnGroup = explode('.', $group);
+        if(count($explodedOnGroup) > 1){
+            $group = array_shift($explodedOnGroup);
+            $item  = implode('.', $explodedOnGroup);
+        } else{
+            $group = 'config';
+            $item  = $explodedOnGroup[0];
+        }
+
+        $this->setParsedKey($key, array($namespace, $group, $item));
 
         $collection = $this->getCollection($group, $namespace);
-
-        dd($key, $value, $environment, $namespace, $group, $item, $collection);
-
         // We'll wipe out the collection so that when we request it again it gets
         // reloaded from the database instead of using the cached version.
-        unset($this->items[$collection]);
+        unset( $this->items[$collection] );
+        unset( $this->items[$namespace.'::config'] );
 
         $this->loader->set($value, $namespace, $group, $item, $environment);
     }
@@ -63,10 +99,10 @@ class DatabaseConfigLoaderRepository extends Repository{
      * @param  string  $package
      * @param  string  $hint
      * @param  string  $namespace
+     *
      * @return void
      */
-    public function package($package, $hint, $namespace = null)
-    {
+    public function package($package, $hint, $namespace = null){
         $namespace = $this->getPackageNamespace($package, $namespace);
 
         $this->packages[] = $namespace;

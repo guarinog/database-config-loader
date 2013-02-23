@@ -1,12 +1,20 @@
 {
     "name": "hailwood/database-config-loader",
-    "description": "",
+    "description": "A package for the Laravel PHP Framework that works in tandem with the default config package to allow developers to easily add user-configurable settings to their app and packages.",
+    "homepage": "https://bitbucket.org/hailwoodnz/smartless4laravel",
+    "keywords": ["laravel", "illuminate", "database", "configuration"],
+    "license": "MIT",
     "authors": [
         {
             "name": "Matthew Hailwood",
             "email": "me@matthewhailwood.co.nz"
         }
     ],
+    "support": {
+        "email": "me@matthewhailwood.co.nz",
+        "issues": "https://bitbucket.org/hailwoodnz/database-config-loader/issues",
+        "source": "https://bitbucket.org/hailwoodnz/database-config-loader/src"
+    },
     "require": {
         "php": ">=5.3.0"
     },

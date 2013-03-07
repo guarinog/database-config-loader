@@ -128,6 +128,16 @@ class DatabaseConfigLoader implements LoaderInterface{
     }
 
     /**
+     * Returns all registered namespaces with the config
+     * loader.
+     *
+     * @return array
+     */
+    public function getNamespaces(){
+        return $this->hints;
+    }
+
+    /**
      * Get the DatabaseConfigLoaderModel instance.
      *
      * @return DatabaseConfigLoaderModel

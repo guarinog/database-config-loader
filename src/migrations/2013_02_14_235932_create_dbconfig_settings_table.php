@@ -28,7 +28,7 @@ class CreateDbconfigSettingsTable extends Migration {
             $table->string('value')->nullable();
             $table->string('type');
             $table->string('environment')->nullable();
-            $table->unique(array('package', 'key', 'env'));
+            $table->unique(array('package', 'key', 'environment'));
 		});
 	}
 

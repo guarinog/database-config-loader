@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 class DatabaseConfigLoaderModel extends Eloquent\Model{
 
     public $timestamps = false;
+    public static $unguarded = true;
     protected $table = 'dbconfig_settings';
 
     public static function exists($group, $package = null){

@@ -40,7 +40,7 @@ class DatabaseConfigLoaderRepository extends Repository{
      *
      * @return void
      */
-    public function set($key, $value, $environment = null){
+    public function set($key, $value){
 
         // We'll unset the key here, we need to do this because previous fetch
         // attempts before they key is actually created creates a slightly different
@@ -90,7 +90,7 @@ class DatabaseConfigLoaderRepository extends Repository{
         unset( $this->items[$collection] );
         unset( $this->items[$namespace.'::config'] );
 
-        $this->loader->set($value, $namespace, $group, $item, $environment);
+        $this->loader->set($value, $namespace, $group, $item, null);
     }
 
     /**

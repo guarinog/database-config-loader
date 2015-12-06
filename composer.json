@@ -1,5 +1,5 @@
 {
-    "name": "hailwood/database-config-loader",
+    "name": "guarinog/database-config-loader",
     "description": "A package for the Laravel PHP Framework that works in tandem with the default config package to allow developers to easily add user-configurable settings to their app and packages.",
     "homepage": "https://bitbucket.org/hailwoodnz/database-config-loader",
     "keywords": ["laravel", "illuminate", "database", "configuration"],

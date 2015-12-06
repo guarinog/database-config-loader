@@ -36,11 +36,10 @@ class DatabaseConfigLoaderRepository extends Repository{
      *
      * @param  string      $key
      * @param  mixed       $value
-     * @param  null|string $environment
      *
      * @return void
      */
-    public function set($key, $value){
+    public function set($key, $value = null){
 
         // We'll unset the key here, we need to do this because previous fetch
         // attempts before they key is actually created creates a slightly different
